@@ -5,7 +5,7 @@ pub struct Color {
     pub blue: u8,
 }
 
-pub fn parse_hex(str: &str) -> Result<Color, &'static str> {
+pub const fn parse_hex(str: &str) -> Result<Color, &'static str> {
     if str.len() != 6 {
         return Err("color hex must be of length 6");
     }
