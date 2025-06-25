@@ -8,6 +8,7 @@ pub enum Device {
     ModelO = 0x2011,
     ModelD = 0x2012,
     ModelOMinus = 0x2013,
+    ModelOProPlugged = 0x2015,
     ModelDMinus = 0x2025,
     WiredModelO = 0x2022,
     WiredModelD = 0x2023,
