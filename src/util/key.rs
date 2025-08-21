@@ -1,19 +1,19 @@
-use anyhow::anyhow;
+use anyhow::{anyhow, Result};
 use std::str::FromStr;
 
-pub fn parse_scan_code(keystr: &str) -> Result<Key, anyhow::Error> {
+pub fn parse_scan_code(keystr: &str) -> Result<Key> {
     u8::from_str(keystr)
         .map(|value| RAW_KEYS.iter().find(|key| value == key.scan_code))?
         .try_into()
 }
 
-pub fn parse_key_code(keystr: &str) -> Result<Key, anyhow::Error> {
+pub fn parse_key_code(keystr: &str) -> Result<Key> {
     u8::from_str(keystr)
         .map(|value| RAW_KEYS.iter().find(|key| value == key.key_code))?
         .try_into()
 }
 
-pub fn parse_code(keystr: &str) -> Result<Key, anyhow::Error> {
+pub fn parse_code(keystr: &str) -> Result<Key> {
     RAW_KEYS.iter().find(|key| keystr == key.code).try_into()
 }
 

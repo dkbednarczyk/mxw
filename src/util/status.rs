@@ -1,8 +1,8 @@
-use anyhow::anyhow;
+use anyhow::{anyhow, Result};
 use hidapi::HidDevice;
 use std::{thread, time::Duration};
 
-pub fn get_buffer(device: &HidDevice) -> Result<[u8; 65], anyhow::Error> {
+pub fn get_buffer(device: &HidDevice) -> Result<[u8; 65]> {
     let mut to_send = [0u8; 65];
 
     to_send[3] = 0x02;
@@ -20,7 +20,7 @@ pub fn get_buffer(device: &HidDevice) -> Result<[u8; 65], anyhow::Error> {
     Ok(resp)
 }
 
-pub fn get(device: &HidDevice) -> Result<usize, anyhow::Error> {
+pub fn get(device: &HidDevice) -> Result<usize> {
     let mut resp = get_buffer(device)?;
 
     device.get_feature_report(&mut resp)?;
@@ -37,7 +37,7 @@ pub fn get(device: &HidDevice) -> Result<usize, anyhow::Error> {
     Ok(status)
 }
 
-pub fn check_sleep(device: &HidDevice) -> Result<(), anyhow::Error> {
+pub fn check_sleep(device: &HidDevice) -> Result<()> {
     if get(device)? == 1 {
         return Err(anyhow!("device is sleeping"));
     }

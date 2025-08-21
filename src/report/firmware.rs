@@ -1,7 +1,8 @@
+use anyhow::Result;
 use hidapi::HidDevice;
 use std::{thread, time::Duration};
 
-pub fn get(device: &HidDevice, wired: bool) -> Result<(), anyhow::Error> {
+pub fn get(device: &HidDevice, wired: bool) -> Result<()> {
     let mut bfr_w = [0u8; 65];
 
     if wired {

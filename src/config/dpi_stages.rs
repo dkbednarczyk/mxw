@@ -1,8 +1,9 @@
+use anyhow::Result;
 use hidapi::HidDevice;
 
 use super::DEFAULT_PROFILE;
 
-pub fn set(device: &HidDevice, profile: Option<u8>, stages: Vec<u16>) -> Result<(), anyhow::Error> {
+pub fn set(device: &HidDevice, profile: Option<u8>, stages: Vec<u16>) -> Result<()> {
     let mut bfr = [0u8; 65];
 
     let profile_id = profile.unwrap_or(DEFAULT_PROFILE);

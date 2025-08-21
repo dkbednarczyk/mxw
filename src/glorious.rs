@@ -3,7 +3,7 @@ use strum_macros::EnumIter;
 pub const VENDOR_ID: u16 = 0x258A;
 pub const INTERFACE: i32 = 0x02;
 
-#[derive(Debug, EnumIter)]
+#[derive(Clone, Copy, Debug, EnumIter)]
 pub enum Device {
     ModelO = 0x2011,
     ModelD = 0x2012,
@@ -17,4 +17,15 @@ pub enum Device {
     WiredModelOMinus = 0x2024,
     WiredSeriesOnePro = 0x2031,
     WiredModelOPro = 0x2015,
+}
+
+pub const fn is_wired(dev: Device) -> bool {
+    matches!(
+        dev,
+        Device::WiredModelO
+            | Device::WiredModelD
+            | Device::WiredModelOMinus
+            | Device::WiredSeriesOnePro
+            | Device::WiredModelOPro
+    )
 }

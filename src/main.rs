@@ -6,13 +6,14 @@ pub mod glorious;
 pub mod report;
 pub mod util;
 
+use anyhow::Result;
 use args::{Args, Config, Kind, Report};
 use clap::Parser;
 use hidapi::HidApi;
 use strum::IntoEnumIterator;
 use util::none::None;
 
-fn main() -> Result<(), anyhow::Error> {
+fn main() -> Result<()> {
     let args = Args::parse();
 
     let hid_api = HidApi::new()?;
@@ -24,11 +25,14 @@ fn main() -> Result<(), anyhow::Error> {
                 && glorious::Device::iter().any(|x| x as u16 == d.product_id())
                 && d.interface_number() == glorious::INTERFACE
         })
-        // Get wired version of the mouse if available
         .min_by(|a, b| a.product_id().cmp(&b.product_id()))
         .none("no matching device found");
 
-    let wired = device_info.product_id() <= 0x2013;
+    let wired = glorious::is_wired(
+        glorious::Device::iter()
+            .find(|p| *p as u16 == device_info.product_id())
+            .unwrap(),
+    );
 
     let device = device_info.open_device(&hid_api)?;
 

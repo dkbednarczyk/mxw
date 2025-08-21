@@ -130,8 +130,8 @@ pub enum Config {
 
     /// Lift-off distance in mm
     LiftOff {
-        #[arg(value_parser(["1", "2"]))]
-        mm: String,
+        #[arg(value_parser(1..=2))]
+        mm: u8,
     },
 
     /// Polling rate in ms

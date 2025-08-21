@@ -1,8 +1,9 @@
 use crate::util::status;
+use anyhow::Result;
 use colored::Colorize;
 use hidapi::HidDevice;
 
-pub fn get(device: &HidDevice, wired: bool) -> Result<(), anyhow::Error> {
+pub fn get(device: &HidDevice, wired: bool) -> Result<()> {
     let status = status::get(device)?;
     let bfr_r = status::get_buffer(device)?;
 

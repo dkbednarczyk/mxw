@@ -5,6 +5,7 @@ pub mod media;
 pub mod mouse;
 
 use crate::args::{Binding, Button};
+use anyhow::{anyhow, Result};
 use colored::Colorize;
 use hidapi::HidDevice;
 use std::{thread, time::Duration};
@@ -16,7 +17,7 @@ pub fn set(
     profile: Option<u8>,
     button: Button,
     binding: Binding,
-) -> Result<(), anyhow::Error> {
+) -> Result<()> {
     let mut bfr = [0u8; 65];
     let profile_id = profile.unwrap_or(DEFAULT_PROFILE);
 
@@ -50,14 +51,12 @@ pub fn set(
     set_and_check(device, &mut bfr, 0, false)
 }
 
-pub fn set_and_check(
-    device: &HidDevice,
-    _bfr: &mut [u8],
-    depth: u8,
-    waiting: bool,
-) -> Result<(), anyhow::Error> {
+pub fn set_and_check(device: &HidDevice, _bfr: &mut [u8], depth: u8, waiting: bool) -> Result<()> {
     if depth >= 3 {
         println!("{}: failed to bind key", "error".bold().red());
+        return Err(anyhow!(
+            "feature report did not return new bind after 3 retries"
+        ));
     }
 
     thread::sleep(Duration::from_millis(100));

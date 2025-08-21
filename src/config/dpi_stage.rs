@@ -1,9 +1,10 @@
 use crate::util::status;
+use anyhow::Result;
 use hidapi::HidDevice;
 
 use super::DEFAULT_PROFILE;
 
-pub fn set(device: &HidDevice, profile: Option<u8>, id: u8) -> Result<(), anyhow::Error> {
+pub fn set(device: &HidDevice, profile: Option<u8>, id: u8) -> Result<()> {
     status::check_sleep(device)?;
 
     let mut bfr = [0u8; 65];

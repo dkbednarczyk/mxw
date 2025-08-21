@@ -1,7 +1,8 @@
 use crate::util::status;
+use anyhow::Result;
 use hidapi::HidDevice;
 
-pub fn set(device: &HidDevice, ms: String) -> Result<(), anyhow::Error> {
+pub fn set(device: &HidDevice, ms: String) -> Result<()> {
     status::check_sleep(device)?;
 
     let mut bfr = [0u8; 65];
@@ -10,7 +11,7 @@ pub fn set(device: &HidDevice, ms: String) -> Result<(), anyhow::Error> {
     bfr[4] = 0x01;
     bfr[5] = 0x01;
 
-    bfr[7] = ms.parse::<u8>().unwrap();
+    bfr[7] = ms.parse::<u8>()?;
 
     device.send_feature_report(&bfr)?;
 
