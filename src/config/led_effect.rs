@@ -37,14 +37,16 @@ pub fn set(device: &HidDevice, profile: Option<u8>, effect: Effect) -> Result<()
             bfr[11] = rate_check(rate, 3)?;
 
             for i in 0..6 {
+                let offset = 12 + (3 * i);
+
                 if i >= colors.len() {
-                    bfr[12 + 3 * i] = 0x00;
-                    bfr[12 + 3 * i + 1] = 0x00;
-                    bfr[12 + 3 * i + 2] = 0x00;
+                    bfr[offset] = 0x00;
+                    bfr[offset + 1] = 0x00;
+                    bfr[offset + 2] = 0x00;
                 } else {
-                    bfr[12 + 3 * i] = colors[i].red;
-                    bfr[12 + 3 * i + 1] = colors[i].green;
-                    bfr[12 + 3 * i + 2] = colors[i].blue;
+                    bfr[offset] = colors[i].red;
+                    bfr[offset + 1] = colors[i].green;
+                    bfr[offset + 2] = colors[i].blue;
                 }
             }
         }

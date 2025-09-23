@@ -19,10 +19,12 @@ pub fn set(device: &HidDevice, profile: Option<u8>, colors: Vec<Color>) -> Resul
 
     bfr[7] = profile_id;
 
-    for i in 0..colors.len() {
-        bfr[8 + 3 * i] = colors[i].red;
-        bfr[8 + 3 * i + 1] = colors[i].green;
-        bfr[8 + 3 * i + 2] = colors[i].blue;
+    for (i, color) in colors.iter().enumerate() {
+        let offset = 8 + (3 * i);
+
+        bfr[offset] = color.red;
+        bfr[offset + 1] = color.green;
+        bfr[offset + 2] = color.blue;
     }
 
     device.send_feature_report(&bfr)?;

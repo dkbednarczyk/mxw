@@ -9,9 +9,10 @@ pub mod util;
 use anyhow::Result;
 use args::{Args, Config, Kind, Report};
 use clap::Parser;
+use colored::Colorize;
 use hidapi::HidApi;
+use std::process;
 use strum::IntoEnumIterator;
-use util::none::None;
 
 fn main() -> Result<()> {
     let args = Args::parse();
@@ -26,7 +27,10 @@ fn main() -> Result<()> {
                 && d.interface_number() == glorious::INTERFACE
         })
         .min_by(|a, b| a.product_id().cmp(&b.product_id()))
-        .none("no matching device found");
+        .unwrap_or_else(|| {
+            println!("{}: no matching device found", "error".bold().red());
+            process::exit(1);
+        });
 
     let wired = glorious::is_wired(
         glorious::Device::iter()

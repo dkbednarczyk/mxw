@@ -16,13 +16,14 @@ pub fn set(device: &HidDevice, profile: Option<u8>, stages: Vec<u16>) -> Result<
     bfr[7] = profile_id;
     bfr[8] = stages.len() as u8;
 
-    for i in 0..stages.len() {
-        let [first, second] = stages[i].to_be_bytes();
+    for (i, stage) in stages.iter().enumerate() {
+        let [first, second] = stage.to_be_bytes();
+        let offset = 9 + (4 * i);
 
-        bfr[9 + (4 * i)] = first;
-        bfr[9 + (4 * i) + 1] = second;
-        bfr[9 + (4 * i) + 2] = first;
-        bfr[9 + (4 * i) + 3] = second;
+        bfr[offset] = first;
+        bfr[offset + 1] = second;
+        bfr[offset + 2] = first;
+        bfr[offset + 3] = second;
     }
 
     device.send_feature_report(&bfr)?;
