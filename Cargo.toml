@@ -4,7 +4,7 @@ authors = [
     "Ola Næss Kaldestad <mail@okal.no>",
     "Damian Bednarczyk <damian@bednarczyk.xyz>",
 ]
-version = "0.1.2"
+version = "0.2.1"
 edition = "2021"
 description = """
 Cross platform CLI tool for Glorious' wireless mice.
@@ -17,9 +17,9 @@ Windows program (Glorious Core).
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-clap = { version = "4.5", features = ["derive"] }
-hidapi = "2.6"
-colored = "2.1"
-strum = "0.26"
-strum_macros = "0.26"
-anyhow = "1.0"
+clap = { version = "^4.5", features = ["derive"] }
+hidapi = "^2.6"
+colored = "^3.0"
+strum = "^0.27"
+strum_macros = "^0.27"
+anyhow = "^1.0"
