@@ -4,7 +4,7 @@ authors = [
     "Ola Næss Kaldestad <mail@okal.no>",
     "Damian Bednarczyk <damian@bednarczyk.xyz>",
 ]
-version = "0.2.1"
+version = "0.2.2"
 edition = "2021"
 description = """
 Cross platform CLI tool for Glorious' wireless mice.

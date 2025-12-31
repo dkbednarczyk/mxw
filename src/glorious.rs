@@ -5,18 +5,19 @@ pub const INTERFACE: i32 = 0x02;
 
 #[derive(Clone, Copy, Debug, EnumIter)]
 pub enum Device {
-    ModelO = 0x2011,
-    ModelD = 0x2012,
     ModelOMinus = 0x2013,
+    SeriesOnePro = 0x2018,
+    ModelO = 0x2022,
+    ModelD = 0x2023,
     ModelDMinus = 0x2025,
     ModelD2Pro = 0x2034,
     ModelOPro = 0x2027,
-    SeriesOnePro = 0x2018,
-    WiredModelO = 0x2022,
-    WiredModelD = 0x2023,
+
+    WiredModelO = 0x2011,
+    WiredModelD = 0x2012,
+    WiredModelOPro = 0x2015,
     WiredModelOMinus = 0x2024,
     WiredSeriesOnePro = 0x2031,
-    WiredModelOPro = 0x2015,
 }
 
 pub const fn is_wired(dev: Device) -> bool {

@@ -44,7 +44,7 @@ fn main() -> Result<()> {
         // mxw report
         Kind::Report(report) => match report {
             // mow report battery
-            Report::Battery => report::battery::get(&device, wired),
+            Report::Battery { hide_status } => report::battery::get(&device, wired, hide_status),
 
             // mow report firmware
             Report::Firmware => report::firmware::get(&device, wired),

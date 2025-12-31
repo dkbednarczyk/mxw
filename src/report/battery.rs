@@ -3,8 +3,7 @@ use anyhow::Result;
 use colored::Colorize;
 use hidapi::HidDevice;
 
-pub fn get(device: &HidDevice, wired: bool) -> Result<()> {
-    let status = status::get(device)?;
+pub fn get(device: &HidDevice, wired: bool, hide_status: bool) -> Result<()> {
     let bfr_r = status::get_buffer(device)?;
 
     let mut percentage = bfr_r[8];
@@ -12,16 +11,22 @@ pub fn get(device: &HidDevice, wired: bool) -> Result<()> {
         percentage = 1;
     }
 
+    let status = status::get(device)?;
+
     match (status, wired) {
         (0, false) => println!("{percentage}%"),
         (0, true) => {
-            let charging_status = match percentage {
-                0..=24 => "charging".red(),
-                25..=74 => "charging".yellow(),
-                75..=99 => "charging".bright_yellow(),
-                100.. => "fully charged".green(),
-            };
-            println!("{percentage}% ({charging_status})")
+            let mut charging_status = "".to_string();
+            if !hide_status {
+                charging_status = match percentage {
+                    0..=24 => format!("({})", "charging".red()),
+                    25..=74 => format!("({})", "charging".yellow()),
+                    75..=99 => format!("({})", "charging".bright_yellow()),
+                    100.. => format!("({})", "fully charged".green()),
+                }
+            }
+
+            println!("{percentage}% {charging_status}")
         }
         (1, _) => println!("(asleep)"),
         (3, _) => print!("(waking up)"),

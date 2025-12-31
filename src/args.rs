@@ -32,7 +32,10 @@ pub enum Kind {
 #[derive(Subcommand)]
 pub enum Report {
     /// Battery percentage (if available)
-    Battery,
+    Battery {
+        #[arg(long, help = "Hide charging status")]
+        hide_status: bool,
+    },
 
     /// Device firmware version
     Firmware,
