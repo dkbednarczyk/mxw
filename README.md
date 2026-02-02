@@ -23,8 +23,13 @@ This project currently only works with these mice, as they are compatible with [
 - You get an error message like `Error: hidapi error: Failed to open a device with path '/dev/hidraw5': Permission denied`
     - You can bypass this for the current session by running `sudo chmod a+rw /dev/hidraw5`.
     - Use a [HID rule](https://github.com/libusb/hidapi/blob/master/udev/69-hid.rules) for a more permanent fix. All relevant information you would need to fill in is in [`glorious.rs`](https://github.com/dkbednarczyk/mxw/blob/master/src/glorious.rs).
+    - Install the [`mxw-udev`](https://aur.archlinux.org/packages/mxw-udev) AUR package on Arch Linux. 
 
 ## Installation
+
+### Arch Linux - AUR
+
+`mxw` can be installed using the [`mxw-git`](https://aur.archlinux.org/packages/mxw-git) AUR package. Udev rules to use it rootless (without `sudo`) can additionally be installed from [`mxw-udev`](https://aur.archlinux.org/packages/mxw-udev).
 
 ### Nix
 You can either import this in your flake or just run 
