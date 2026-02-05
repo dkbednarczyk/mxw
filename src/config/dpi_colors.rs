@@ -1,13 +1,10 @@
 use crate::util::color::Color;
-use crate::util::status;
 use anyhow::Result;
 use hidapi::HidDevice;
 
 use super::DEFAULT_PROFILE;
 
 pub fn set(device: &HidDevice, profile: Option<u8>, colors: Vec<Color>) -> Result<()> {
-    status::check_sleep(device)?;
-
     let mut bfr = [0u8; 65];
 
     let profile_id = profile.unwrap_or(DEFAULT_PROFILE);

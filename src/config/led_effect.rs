@@ -1,13 +1,12 @@
 use crate::args::Effect;
-use crate::util::status;
 use anyhow::{anyhow, Result};
 use hidapi::HidDevice;
 
 use super::DEFAULT_PROFILE;
 
-pub fn set(device: &HidDevice, profile: Option<u8>, effect: Effect) -> Result<()> {
-    status::check_sleep(device)?;
+const RATE_DEFAULT: u8 = 40;
 
+pub fn set(device: &HidDevice, profile: Option<u8>, effect: Effect) -> Result<()> {
     let mut bfr = [0u8; 65];
 
     let profile_id = profile.unwrap_or(DEFAULT_PROFILE);
@@ -112,8 +111,6 @@ pub fn set(device: &HidDevice, profile: Option<u8>, effect: Effect) -> Result<()
 
     Ok(())
 }
-
-const RATE_DEFAULT: u8 = 40;
 
 fn rate_check(rate: Option<u8>, effect_id: u8) -> Result<u8> {
     let rate_unwrapped = rate.unwrap_or(RATE_DEFAULT);

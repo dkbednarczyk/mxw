@@ -1,11 +1,8 @@
 use super::DEFAULT_PROFILE;
-use crate::util::status;
 use anyhow::Result;
 use hidapi::HidDevice;
 
 pub fn set(device: &HidDevice, profile: Option<u8>, ms: u8) -> Result<()> {
-    status::check_sleep(device)?;
-
     let mut bfr = [0u8; 65];
 
     let profile_id = profile.unwrap_or(DEFAULT_PROFILE);
