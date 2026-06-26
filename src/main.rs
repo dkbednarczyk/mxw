@@ -12,8 +12,6 @@ use clap::Parser;
 use colored::Colorize;
 use hidapi::HidApi;
 use std::process;
-use strum::IntoEnumIterator;
-use crate::glorious::Device;
 
 fn main() -> Result<()> {
     let args = Args::parse();
@@ -24,7 +22,7 @@ fn main() -> Result<()> {
         .device_list()
         .filter(|d| {
             d.vendor_id() == glorious::VENDOR_ID
-                && Device::iter().any(|x| x as u16 == d.product_id())
+                && glorious::is_glorious_product(d.product_id())
                 && d.interface_number() == glorious::INTERFACE
         })
         .min_by(|a, b| a.product_id().cmp(&b.product_id()))
@@ -33,11 +31,7 @@ fn main() -> Result<()> {
             process::exit(1);
         });
 
-    let wired = glorious::is_wired(
-        Device::iter()
-            .find(|p| *p as u16 == device_info.product_id())
-            .unwrap(),
-    );
+    let wired = glorious::is_wired(device_info.product_id());
 
     let device = device_info.open_device(&hid_api)?;
 

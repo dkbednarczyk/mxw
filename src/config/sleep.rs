@@ -1,14 +1,14 @@
 use anyhow::Result;
 use hidapi::HidDevice;
 
-pub fn set(device: &HidDevice, minutes: u8, seconds: Option<u8>) -> Result<()> {
+pub fn set(device: &HidDevice, minutes: u8, seconds: u8) -> Result<()> {
     let mut buffer = [0u8; 65];
 
     buffer[3] = 0x02;
     buffer[4] = 0x02;
     buffer[6] = 0x07;
 
-    let seconds_total = (minutes as u16) * 60 + (seconds.unwrap_or(0) as u16);
+    let seconds_total = (minutes as u16) * 60 + (seconds as u16);
 
     if seconds_total > 0 {
         let [first, second] = seconds_total.to_be_bytes();

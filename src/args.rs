@@ -57,7 +57,7 @@ pub enum Config {
             default_value = "1",
             value_parser = value_parser!(u8).range(1..=3),
         )]
-        profile: Option<u8>,
+        profile: u8,
 
         #[clap(subcommand)]
         effect: Effect,
@@ -68,7 +68,7 @@ pub enum Config {
         wired: u8,
 
         #[clap(default_value = "0")]
-        wireless: Option<u8>,
+        wireless: u8,
     },
 
     /// Sleep delay in minutes [and seconds]
@@ -76,7 +76,7 @@ pub enum Config {
         minutes: u8,
 
         #[clap(default_value = "0")]
-        seconds: Option<u8>,
+        seconds: u8,
     },
 
     /// Active DPI stage by id
@@ -87,7 +87,7 @@ pub enum Config {
             default_value = "1",
             value_parser = value_parser!(u8).range(1..=3),
         )]
-        profile: Option<u8>,
+        profile: u8,
 
         #[arg(value_parser = value_parser!(u8).range(1..=4))]
         id: u8,
@@ -101,7 +101,7 @@ pub enum Config {
             default_value = "1",
             value_parser = value_parser!(u8).range(1..=3),
         )]
-        profile: Option<u8>,
+        profile: u8,
 
         #[arg(
             name = "stage",
@@ -120,7 +120,7 @@ pub enum Config {
             default_value = "1",
             value_parser = value_parser!(u8).range(1..=3),
         )]
-        profile: Option<u8>,
+        profile: u8,
 
         #[arg(
             name = "COLOR",
@@ -139,8 +139,8 @@ pub enum Config {
 
     /// Polling rate in ms
     PollingRate {
-        #[clap(value_parser(["1", "2", "4", "8"]))]
-        ms: String,
+        #[arg(value_parser = parse_polling_rate)]
+        ms: u8,
     },
 
     /// Debounce in ms (0-16)
@@ -151,7 +151,7 @@ pub enum Config {
             default_value = "1",
             value_parser = value_parser!(u8).range(1..=3),
         )]
-        profile: Option<u8>,
+        profile: u8,
 
         #[clap(value_parser = value_parser!(u8).range(0..=16))]
         ms: u8,
@@ -165,7 +165,7 @@ pub enum Config {
             default_value = "1",
             value_parser = value_parser!(u8).range(1..=3),
         )]
-        profile: Option<u8>,
+        profile: u8,
 
         /// Mouse button
         #[arg(value_enum)]
@@ -180,6 +180,13 @@ pub enum Config {
         #[arg(value_enum)]
         direction: ScrollDirection,
     },
+}
+
+fn parse_polling_rate(value: &str) -> Result<u8, &'static str> {
+    match value {
+        "1" | "2" | "4" | "8" => value.parse().map_err(|_| "invalid polling rate"),
+        _ => Err("polling rate must be one of 1, 2, 4, 8"),
+    }
 }
 
 #[derive(Clone, ValueEnum)]
@@ -198,7 +205,7 @@ pub enum Effect {
             default_value = "40",
             value_parser = value_parser!(u8).range(0..=100),
         )]
-        rate: Option<u8>,
+        rate: u8,
     },
 
     /// Cycle through all colors
@@ -209,7 +216,7 @@ pub enum Effect {
             default_value = "40",
             value_parser = value_parser!(u8).range(0..=100),
         )]
-        rate: Option<u8>,
+        rate: u8,
     },
 
     /// Pulse on/off through given colors
@@ -220,7 +227,7 @@ pub enum Effect {
             default_value = "40",
             value_parser = value_parser!(u8).range(0..=100),
         )]
-        rate: Option<u8>,
+        rate: u8,
 
         /// From 2 to 6 colors in hex format
         #[arg(
@@ -246,7 +253,7 @@ pub enum Effect {
             default_value = "40",
             value_parser = value_parser!(u8).range(0..=100),
         )]
-        rate: Option<u8>,
+        rate: u8,
 
         #[arg(value_parser(color::parse_hex))]
         color: Color,
@@ -260,7 +267,7 @@ pub enum Effect {
             default_value = "40",
             value_parser = value_parser!(u8).range(0..=100),
         )]
-        rate: Option<u8>,
+        rate: u8,
     },
 
     /// Strobe-like effect
@@ -271,7 +278,7 @@ pub enum Effect {
             default_value = "40",
             value_parser = value_parser!(u8).range(0..=100),
         )]
-        rate: Option<u8>,
+        rate: u8,
 
         /// 1 or 2 colors in hex format
         #[arg(
@@ -290,7 +297,7 @@ pub enum Effect {
             default_value = "40",
             value_parser = value_parser!(u8).range(0..=100),
         )]
-        rate: Option<u8>,
+        rate: u8,
     },
 
     /// No effect, LED off
@@ -330,15 +337,9 @@ pub enum Binding {
     #[clap(subcommand)]
     DPI(DPIFn),
 
-    /// (not implemented) Macro
-    Macro,
-
     /// Multimedia
     #[clap(subcommand)]
     Media(MediaFn),
-
-    /// (not implemented) Launch applications etc.
-    Shortcut,
 
     /// Do nothing
     None,

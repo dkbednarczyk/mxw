@@ -10,7 +10,7 @@ pub fn set(device: &HidDevice, direction: ScrollDirection) -> Result<()> {
                 // Up => Up
                 bind::set(
                     device,
-                    Some(i),
+                    i,
                     Button::ScrollUp,
                     Binding::Mouse(MouseFn::ScrollUp),
                 )?;
@@ -18,7 +18,7 @@ pub fn set(device: &HidDevice, direction: ScrollDirection) -> Result<()> {
                 // Down => Down
                 bind::set(
                     device,
-                    Some(i),
+                    i,
                     Button::ScrollDown,
                     Binding::Mouse(MouseFn::ScrollDown),
                 )?;
@@ -28,7 +28,7 @@ pub fn set(device: &HidDevice, direction: ScrollDirection) -> Result<()> {
                 // Up => Down
                 bind::set(
                     device,
-                    Some(i),
+                    i,
                     Button::ScrollUp,
                     Binding::Mouse(MouseFn::ScrollDown),
                 )?;
@@ -36,7 +36,7 @@ pub fn set(device: &HidDevice, direction: ScrollDirection) -> Result<()> {
                 // Down => Up
                 bind::set(
                     device,
-                    Some(i),
+                    i,
                     Button::ScrollDown,
                     Binding::Mouse(MouseFn::ScrollUp),
                 )?;

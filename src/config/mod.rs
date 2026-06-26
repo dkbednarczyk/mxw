@@ -10,5 +10,3 @@ pub mod polling_rate;
 pub mod profile;
 pub mod scroll;
 pub mod sleep;
-
-pub const DEFAULT_PROFILE: u8 = 1;

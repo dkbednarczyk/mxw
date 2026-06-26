@@ -2,7 +2,7 @@ use anyhow::Result;
 use hidapi::HidDevice;
 use std::{thread, time::Duration};
 
-pub fn set(device: &HidDevice, wired: u8, wireless: Option<u8>) -> Result<()> {
+pub fn set(device: &HidDevice, wired: u8, wireless: u8) -> Result<()> {
     let mut bfr = [0u8; 65];
 
     bfr[3] = 0x02;
@@ -18,7 +18,7 @@ pub fn set(device: &HidDevice, wired: u8, wireless: Option<u8>) -> Result<()> {
     thread::sleep(Duration::from_millis(50));
 
     bfr[7] = 0x00;
-    bfr[8] = wireless.unwrap_or(wired);
+    bfr[8] = wireless;
 
     device.send_feature_report(&bfr)?;
 

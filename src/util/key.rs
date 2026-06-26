@@ -21,7 +21,7 @@ pub fn parse_code(keystr: &str) -> Result<Key> {
 pub struct Key {
     pub scan_code: u8,
     pub key_code: u8,
-    pub code: String,
+    pub code: &'static str,
     pub modifier: Option<u8>,
 }
 
@@ -30,7 +30,7 @@ impl From<&RawKey> for Key {
         Self {
             scan_code: item.scan_code,
             key_code: item.key_code,
-            code: String::from(item.code),
+            code: item.code,
             modifier: item.modifier,
         }
     }

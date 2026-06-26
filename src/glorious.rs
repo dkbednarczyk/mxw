@@ -1,32 +1,13 @@
-use strum_macros::EnumIter;
-
 pub const VENDOR_ID: u16 = 0x258A;
 pub const INTERFACE: i32 = 0x02;
 
-#[derive(Clone, Copy, Debug, EnumIter)]
-pub enum Device {
-    ModelOMinus = 0x2013,
-    SeriesOnePro = 0x2018,
-    ModelO = 0x2022,
-    ModelD = 0x2023,
-    ModelDMinus = 0x2025,
-    ModelD2Pro = 0x2034,
-    ModelOPro = 0x2027,
+pub const WIRELESS_PRODUCT_IDS: [u16; 7] = [0x2013, 0x2018, 0x2022, 0x2023, 0x2025, 0x2034, 0x2027];
+pub const WIRED_PRODUCT_IDS: [u16; 5] = [0x2011, 0x2012, 0x2015, 0x2024, 0x2031];
 
-    WiredModelO = 0x2011,
-    WiredModelD = 0x2012,
-    WiredModelOPro = 0x2015,
-    WiredModelOMinus = 0x2024,
-    WiredSeriesOnePro = 0x2031,
+pub fn is_glorious_product(product_id: u16) -> bool {
+    WIRELESS_PRODUCT_IDS.contains(&product_id) || WIRED_PRODUCT_IDS.contains(&product_id)
 }
 
-pub const fn is_wired(dev: Device) -> bool {
-    matches!(
-        dev,
-        Device::WiredModelO
-            | Device::WiredModelD
-            | Device::WiredModelOMinus
-            | Device::WiredSeriesOnePro
-            | Device::WiredModelOPro
-    )
+pub fn is_wired(product_id: u16) -> bool {
+    WIRED_PRODUCT_IDS.contains(&product_id)
 }
