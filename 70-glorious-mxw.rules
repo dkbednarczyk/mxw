@@ -1,0 +1,29 @@
+# Use these udev rules to allow `mxw` to communicate with wireless Glorious mice without privelige escalation (sudo)
+
+# HIDAPI/hidraw
+# TAG+="uaccess" only gives permission to physically present users
+# Model O Wireless 	(Wireless, Wired)
+KERNEL=="hidraw*", ATTRS{idVendor}=="258a", ATTRS{idProduct}=="2022", TAG+="uaccess"
+KERNEL=="hidraw*", ATTRS{idVendor}=="258a", ATTRS{idProduct}=="2011", TAG+="uaccess"
+
+# Model O- Wireless 	(Wireless, Wired)
+KERNEL=="hidraw*", ATTRS{idVendor}=="258a", ATTRS{idProduct}=="2013", TAG+="uaccess"
+KERNEL=="hidraw*", ATTRS{idVendor}=="258a", ATTRS{idProduct}=="2024", TAG+="uaccess"
+
+# Model O PRO 		(Wireless, Wired)
+KERNEL=="hidraw*", ATTRS{idVendor}=="258a", ATTRS{idProduct}=="2027", TAG+="uaccess"
+KERNEL=="hidraw*", ATTRS{idVendor}=="258a", ATTRS{idProduct}=="2015", TAG+="uaccess"
+
+# Model D Wireless 	(Wireless, Wired)
+KERNEL=="hidraw*", ATTRS{idVendor}=="258a", ATTRS{idProduct}=="2023", TAG+="uaccess"
+KERNEL=="hidraw*", ATTRS{idVendor}=="258a", ATTRS{idProduct}=="2012", TAG+="uaccess"
+
+# Model D- Wireless 	(Wireless, ~~Wired~~)
+KERNEL=="hidraw*", ATTRS{idVendor}=="258a", ATTRS{idProduct}=="2025", TAG+="uaccess"
+# Wired ID unknown, please help by contributing the wired USB ID if you have a Model D-. 
+
+# Model D2 PRO 		(Wireless)
+KERNEL=="hidraw*", ATTRS{idVendor}=="258a", ATTRS{idProduct}=="2034", TAG+="uaccess"
+
+# Series 1 PRO 		(Wireless)
+KERNEL=="hidraw*", ATTRS{idVendor}=="258a", ATTRS{idProduct}=="2018", TAG+="uaccess"
