@@ -50,8 +50,16 @@ pub enum Report {
         profile: Option<u8>,
 
         /// List every DPI stage, marking the active one
-        #[arg(short, long)]
+        #[arg(short, long, conflicts_with_all = ["dpi", "stage"])]
         all: bool,
+
+        /// Print only the resolution, e.g. `1600`
+        #[arg(short, long, conflicts_with = "stage")]
+        dpi: bool,
+
+        /// Print only the active stage number, e.g. `3`
+        #[arg(short, long)]
+        stage: bool,
     },
 }
 

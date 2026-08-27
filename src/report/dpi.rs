@@ -2,7 +2,13 @@ use crate::report;
 use anyhow::{anyhow, Result};
 use hidapi::HidDevice;
 
-pub fn get(device: &HidDevice, profile: Option<u8>, all: bool) -> Result<()> {
+pub fn get(
+    device: &HidDevice,
+    profile: Option<u8>,
+    all: bool,
+    dpi_only: bool,
+    stage_only: bool,
+) -> Result<()> {
     // Mirror of `config::profile::set` (0x05): active profile id at index 7.
     let profile = match profile {
         Some(p) => p,
@@ -11,6 +17,11 @@ pub fn get(device: &HidDevice, profile: Option<u8>, all: bool) -> Result<()> {
 
     // Mirror of `config::dpi_stage::set` (0x02): active stage id at index 8.
     let active = report::read(device, 0x02, 0x82, 0x01, profile)?[8];
+
+    if stage_only {
+        println!("{active}");
+        return Ok(());
+    }
 
     // Mirror of `config::dpi_stages::set` (0x01): stage count at index 8, then
     // one big-endian u16 per stage repeated for the X and Y axes (4 bytes each).
@@ -24,6 +35,11 @@ pub fn get(device: &HidDevice, profile: Option<u8>, all: bool) -> Result<()> {
 
     if !(1..=count).contains(&active) {
         return Err(anyhow!("device reported invalid active DPI stage {active}"));
+    }
+
+    if dpi_only {
+        println!("{}", dpi(active));
+        return Ok(());
     }
 
     if all {
