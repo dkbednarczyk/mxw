@@ -39,6 +39,28 @@ pub enum Report {
 
     /// Device firmware version
     Firmware,
+
+    /// Active profile id
+    Profile,
+
+    /// Active DPI stage and its resolution
+    DPI {
+        /// Profile id (1-3), defaults to the active profile
+        #[arg(short, long, value_parser = value_parser!(u8).range(1..=3))]
+        profile: Option<u8>,
+
+        /// List every DPI stage, marking the active one
+        #[arg(short, long, conflicts_with_all = ["dpi", "stage"])]
+        all: bool,
+
+        /// Print only the resolution, e.g. `1600`
+        #[arg(short, long, conflicts_with = "stage")]
+        dpi: bool,
+
+        /// Print only the active stage number, e.g. `3`
+        #[arg(short, long)]
+        stage: bool,
+    },
 }
 
 #[derive(Subcommand)]

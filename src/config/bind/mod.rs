@@ -91,7 +91,7 @@ fn set_key(bfr: &mut [u8], kind: KeyKind) {
     }
 }
 
-fn set_mouse(bfr: &mut [u8], mouse_fn: MouseFn) {
+const fn set_mouse(bfr: &mut [u8], mouse_fn: MouseFn) {
     let id = match mouse_fn {
         MouseFn::Left => 1,
         MouseFn::Scroll => 3,
@@ -121,7 +121,7 @@ fn set_mouse(bfr: &mut [u8], mouse_fn: MouseFn) {
     }
 }
 
-fn set_keyboard(bfr: &mut [u8], keyboard_fn: KeyboardFn) {
+const fn set_keyboard(bfr: &mut [u8], keyboard_fn: KeyboardFn) {
     bfr[0] = 0x05;
     bfr[1] = 0x02;
     bfr[2] = match keyboard_fn {
@@ -133,7 +133,7 @@ fn set_keyboard(bfr: &mut [u8], keyboard_fn: KeyboardFn) {
     bfr[3] = 0x0F;
 }
 
-fn set_dpi(bfr: &mut [u8], dpi_fn: DPIFn) {
+const fn set_dpi(bfr: &mut [u8], dpi_fn: DPIFn) {
     bfr[0] = 0x07;
     bfr[1] = 0x01;
     bfr[2] = match dpi_fn {
@@ -144,7 +144,7 @@ fn set_dpi(bfr: &mut [u8], dpi_fn: DPIFn) {
     };
 }
 
-fn set_media(bfr: &mut [u8], media_fn: MediaFn) {
+const fn set_media(bfr: &mut [u8], media_fn: MediaFn) {
     let (b1, b2) = match media_fn {
         MediaFn::Player => (1, 131),
         MediaFn::PlayPause => (0, 205),

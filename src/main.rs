@@ -43,6 +43,17 @@ fn main() -> Result<()> {
 
             // mow report firmware
             Report::Firmware => report::firmware::get(&device, wired),
+
+            // mxw report profile
+            Report::Profile => report::profile::get(&device),
+
+            // mxw report dpi
+            Report::DPI {
+                profile,
+                all,
+                dpi,
+                stage,
+            } => report::dpi::get(&device, profile, all, dpi, stage),
         },
 
         // mxw config
