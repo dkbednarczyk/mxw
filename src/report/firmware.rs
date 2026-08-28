@@ -3,7 +3,6 @@ use anyhow::Result;
 use hidapi::HidDevice;
 
 pub fn get(device: &HidDevice) -> Result<()> {
-    // Mirror of the firmware query the Windows tool sends (command 0x81).
     let resp = report::read(device, 0x03, 0x81, 0x00, 0x00)?;
 
     println!("{}.{}.{}.{}", resp[7], resp[8], resp[9], resp[10]);
