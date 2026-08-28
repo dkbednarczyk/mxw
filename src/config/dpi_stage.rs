@@ -11,6 +11,13 @@ pub fn set(device: &HidDevice, profile: u8, id: u8) -> Result<()> {
         ));
     }
 
+    write(device, profile, id)
+}
+
+/// Write the active-stage packet without checking `id` against the device's
+/// current stage count. Callers that already know `id` is in range (e.g.
+/// `dpi_stages::set` resetting to stage 1) use this to skip the extra read.
+pub(crate) fn write(device: &HidDevice, profile: u8, id: u8) -> Result<()> {
     let mut bfr = [0u8; 65];
 
     bfr[3] = 0x02;

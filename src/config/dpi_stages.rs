@@ -9,9 +9,12 @@ pub fn set(device: &HidDevice, profile: u8, stages: Vec<u16>) -> Result<()> {
         ));
     }
 
-    // Set active stage to the first one before writing stages
-    // This follows how Glorious Core software works (at least from my testing)
-    dpi_stage::set(device, profile, 1)?;
+    // Reset the active stage to the first one before rewriting the stage list.
+    // Mirrors the Glorious Core sequence; shrinking the list while a higher
+    // stage is active can leave the mouse unresponsive until it is replugged.
+    // Use the raw write: stage 1 is always valid, so there is no need to read
+    // the current stage count back from the device first.
+    dpi_stage::write(device, profile, 1)?;
 
     let mut bfr = [0u8; 65];
 
