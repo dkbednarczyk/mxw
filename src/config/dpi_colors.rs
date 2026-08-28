@@ -1,8 +1,18 @@
+use crate::report;
 use crate::util::color::Color;
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use hidapi::HidDevice;
 
 pub fn set(device: &HidDevice, profile: u8, colors: Vec<Color>) -> Result<()> {
+    let count = report::dpi::count(device, profile)?;
+
+    if colors.is_empty() || colors.len() > count as usize {
+        return Err(anyhow!(
+            "cannot set {} colors: profile {profile} has {count} DPI stage(s)",
+                           colors.len()
+        ));
+    }
+
     let mut bfr = [0u8; 65];
 
     bfr[3] = 0x02;
