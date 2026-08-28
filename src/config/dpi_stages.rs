@@ -1,8 +1,17 @@
 use crate::config::{dpi_stage, MAX_DPI_STAGES};
+use crate::report;
 use anyhow::{anyhow, Result};
 use hidapi::HidDevice;
 
-pub fn set(device: &HidDevice, profile: u8, stages: Vec<u16>) -> Result<()> {
+pub fn set(device: &HidDevice, profile: u8, stages: Vec<u16>, uniform: Option<u16>) -> Result<()> {
+    let stages = match uniform {
+        // Fill every stage the profile currently has with the same value.
+        // Reading the count back is unavoidable here: "all stages" is defined
+        // by the device's current configuration, not by anything on the CLI.
+        Some(dpi) => vec![dpi; report::dpi::count(device, profile)? as usize],
+        None => stages,
+    };
+
     if stages.is_empty() || stages.len() > MAX_DPI_STAGES as usize {
         return Err(anyhow!(
             "must provide between 1 and {MAX_DPI_STAGES} DPI stages"

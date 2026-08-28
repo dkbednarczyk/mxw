@@ -125,6 +125,15 @@ pub enum Config {
         )]
         profile: u8,
 
+        /// Set every stage in the profile to this DPI, keeping the current stage count
+        #[arg(
+            short, long,
+            value_name = "DPI",
+            value_parser = value_parser!(u16).range(100..=19000),
+            conflicts_with = "stage",
+        )]
+        uniform: Option<u16>,
+
         #[arg(
             name = "stage",
             num_args(1..=6),
