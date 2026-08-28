@@ -9,13 +9,11 @@ pub fn get(
     dpi_only: bool,
     stage_only: bool,
 ) -> Result<()> {
-    // Mirror of `config::profile::set` (0x05): active profile id at index 7.
     let profile = match profile {
         Some(p) => p,
         None => report::read(device, 0x01, 0x85, 0x00, 0x00)?[7],
     };
 
-    // Mirror of `config::dpi_stage::set` (0x02): active stage id at index 8.
     let active = report::read(device, 0x02, 0x82, 0x01, profile)?[8];
 
     if stage_only {
@@ -23,10 +21,14 @@ pub fn get(
         return Ok(());
     }
 
-    // Mirror of `config::dpi_stages::set` (0x01): stage count at index 8, then
-    // one big-endian u16 per stage repeated for the X and Y axes (4 bytes each).
     let stages = report::read(device, 0x12, 0x81, 0x01, profile)?;
     let count = stages[8];
+
+    if !(1..=13).contains(&count) {
+        return Err(anyhow!(
+            "device reported an implausible DPI stage count ({count})"
+        ));
+    }
 
     let dpi = |stage: u8| -> u16 {
         let offset = 9 + 4 * (stage as usize - 1);

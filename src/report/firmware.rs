@@ -1,26 +1,11 @@
+use crate::report;
 use anyhow::Result;
 use hidapi::HidDevice;
-use std::{thread, time::Duration};
 
-pub fn get(device: &HidDevice, wired: bool) -> Result<()> {
-    let mut bfr_w = [0u8; 65];
+pub fn get(device: &HidDevice) -> Result<()> {
+    let resp = report::read(device, 0x03, 0x81, 0x00, 0x00)?;
 
-    if wired {
-        bfr_w[3] = 0x02;
-    }
-
-    bfr_w[4] = 0x03;
-    bfr_w[6] = 0x81;
-
-    device.send_feature_report(&bfr_w)?;
-
-    thread::sleep(Duration::from_millis(50));
-
-    let mut bfr_r = [0u8; 65];
-
-    device.get_feature_report(&mut bfr_r)?;
-
-    println!("{}.{}.{}.{}", bfr_r[7], bfr_r[8], bfr_r[9], bfr_r[10]);
+    println!("{}.{}.{}.{}", resp[7], resp[8], resp[9], resp[10]);
 
     Ok(())
 }

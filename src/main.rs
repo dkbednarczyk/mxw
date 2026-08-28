@@ -42,7 +42,7 @@ fn main() -> Result<()> {
             Report::Battery { hide_status } => report::battery::get(&device, wired, hide_status),
 
             // mow report firmware
-            Report::Firmware => report::firmware::get(&device, wired),
+            Report::Firmware => report::firmware::get(&device),
 
             // mxw report profile
             Report::Profile => report::profile::get(&device),
