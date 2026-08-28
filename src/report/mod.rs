@@ -11,9 +11,13 @@ use std::{thread, time::Duration};
 ///
 /// Read commands mirror their `config` write counterparts with the high bit
 /// (`0x80`) set on the command byte (index 6). The device echoes the command
-/// bytes back alongside the requested data. The first `get_feature_report`
+/// byte back alongside the requested data. The first `get_feature_report`
 /// after a send occasionally returns a stale buffer, so retry until the echoed
 /// command matches (same approach as `util::status`).
+///
+/// `length` is the request's payload length at index 4; the device may answer
+/// with a different length at that index (e.g. more DPI stages), so only the
+/// command byte is used to recognise the response.
 pub fn read(device: &HidDevice, length: u8, command: u8, sub: u8, arg: u8) -> Result<[u8; 65]> {
     let mut bfr = [0u8; 65];
 
@@ -31,7 +35,7 @@ pub fn read(device: &HidDevice, length: u8, command: u8, sub: u8, arg: u8) -> Re
 
         device.get_feature_report(&mut resp)?;
 
-        if resp[4] == length && resp[6] == command {
+        if resp[6] == command {
             return Ok(resp);
         }
     }

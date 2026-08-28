@@ -28,6 +28,13 @@ pub fn get(
     let stages = report::read(device, 0x12, 0x81, 0x01, profile)?;
     let count = stages[8];
 
+    // 4 bytes per stage after index 8, bounded by the 65-byte response.
+    if !(1..=13).contains(&count) {
+        return Err(anyhow!(
+            "device reported an implausible DPI stage count ({count})"
+        ));
+    }
+
     let dpi = |stage: u8| -> u16 {
         let offset = 9 + 4 * (stage as usize - 1);
         u16::from_be_bytes([stages[offset], stages[offset + 1]])
