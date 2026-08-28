@@ -1,11 +1,26 @@
-use anyhow::Result;
+use crate::config::{dpi_stage, MAX_DPI_STAGES};
+use anyhow::{anyhow, Result};
 use hidapi::HidDevice;
 
 pub fn set(device: &HidDevice, profile: u8, stages: Vec<u16>) -> Result<()> {
+    if stages.is_empty() || stages.len() > MAX_DPI_STAGES as usize {
+        return Err(anyhow!(
+            "must provide between 1 and {MAX_DPI_STAGES} DPI stages"
+        ));
+    }
+
+    // Reset the active stage to the first one before rewriting the stage list.
+    // Mirrors the Glorious Core sequence; shrinking the list while a higher
+    // stage is active can leave the mouse unresponsive until it is replugged.
+    // Use the raw write: stage 1 is always valid, so there is no need to read
+    // the current stage count back from the device first.
+    dpi_stage::write(device, profile, 1)?;
+
     let mut bfr = [0u8; 65];
 
     bfr[3] = 0x02;
-    bfr[4] = 0x12;
+    // Payload length: 2 bytes of profile + count, then 4 bytes per stage
+    bfr[4] = 2 + (stages.len() * 4) as u8;
     bfr[5] = 0x01;
     bfr[6] = 0x01;
 

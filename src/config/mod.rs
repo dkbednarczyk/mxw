@@ -1,3 +1,6 @@
+/// Maximum number of DPI stages supported by the software
+pub const MAX_DPI_STAGES: u8 = 6;
+
 pub mod bind;
 pub mod debounce;
 pub mod dpi_colors;

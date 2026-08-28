@@ -111,7 +111,7 @@ pub enum Config {
         )]
         profile: u8,
 
-        #[arg(value_parser = value_parser!(u8).range(1..=4))]
+        #[arg(value_parser = value_parser!(u8).range(1..=6))]
         id: u8,
     },
 
@@ -127,7 +127,7 @@ pub enum Config {
 
         #[arg(
             name = "stage",
-            number_of_values = 4,
+            num_args(1..=6),
             value_parser = value_parser!(u16).range(100..=19000),
             default_values(&["400", "800", "1600", "3200"]),
         )]
@@ -146,7 +146,7 @@ pub enum Config {
 
         #[arg(
             name = "COLOR",
-            number_of_values = 4,
+            num_args(1..=6),
             value_parser(color::parse_hex),
             default_values(&["FFFF00", "0000FF", "FF0000", "00FF00"]),
         )]
