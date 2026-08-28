@@ -9,7 +9,7 @@ pub fn set(device: &HidDevice, profile: u8, colors: Vec<Color>) -> Result<()> {
     if colors.is_empty() || colors.len() > count as usize {
         return Err(anyhow!(
             "cannot set {} colors: profile {profile} has {count} DPI stage(s)",
-                           colors.len()
+            colors.len()
         ));
     }
 
