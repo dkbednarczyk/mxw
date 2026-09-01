@@ -45,7 +45,7 @@ fn set_and_check(device: &HidDevice, bfr: &[u8]) -> Result<()> {
             continue;
         }
 
-        let mut read = [0u8; 55];
+        let mut read = [0u8; 65];
         device.get_feature_report(&mut read)?;
         thread::sleep(Duration::from_millis(50));
 
