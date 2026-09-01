@@ -1,8 +1,13 @@
 use crate::args::{Binding, Button, DPIFn, KeyKind, KeyboardFn, MediaFn, MouseFn};
+use crate::util::IO_DELAY;
 use anyhow::{anyhow, Result};
 use colored::Colorize;
 use hidapi::HidDevice;
-use std::{thread, time::Duration};
+use std::thread;
+
+/// Number of times to wait for the device to echo back a new bind before
+/// giving up.
+const MAX_BIND_ATTEMPTS: usize = 3;
 
 pub fn set(device: &HidDevice, profile: u8, button: Button, binding: Binding) -> Result<()> {
     let mut bfr = [0u8; 65];
@@ -38,8 +43,8 @@ pub fn set(device: &HidDevice, profile: u8, button: Button, binding: Binding) ->
 fn set_and_check(device: &HidDevice, bfr: &[u8]) -> Result<()> {
     let mut waiting = false;
 
-    for _ in 0..3 {
-        thread::sleep(Duration::from_millis(50));
+    for _ in 0..MAX_BIND_ATTEMPTS {
+        thread::sleep(IO_DELAY);
 
         if waiting {
             continue;
@@ -47,7 +52,7 @@ fn set_and_check(device: &HidDevice, bfr: &[u8]) -> Result<()> {
 
         let mut read = [0u8; 65];
         device.get_feature_report(&mut read)?;
-        thread::sleep(Duration::from_millis(50));
+        thread::sleep(IO_DELAY);
 
         match read[0] {
             0xA2 => device.send_feature_report(bfr)?,
@@ -60,7 +65,7 @@ fn set_and_check(device: &HidDevice, bfr: &[u8]) -> Result<()> {
     eprintln!("{}: failed to bind key", "error".bold().red());
 
     Err(anyhow!(
-        "feature report did not return new bind after 3 retries"
+        "feature report did not return new bind after {MAX_BIND_ATTEMPTS} retries"
     ))
 }
 

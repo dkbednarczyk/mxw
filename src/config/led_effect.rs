@@ -39,20 +39,20 @@ pub fn set(device: &HidDevice, profile: u8, effect: Effect) -> Result<()> {
         Effect::Glorious { rate } => {
             bfr[4] = 0x05;
             bfr[9] = 0x01;
-            bfr[11] = rate_check(rate, 1);
+            bfr[11] = rate_default(rate);
         }
 
         Effect::Cycle { rate } => {
             bfr[4] = 0x05;
             bfr[9] = 0x02;
-            bfr[11] = rate_check(rate, 2);
+            bfr[11] = rate_default(rate);
             bfr[12] = 0xFF;
         }
 
         Effect::Pulse { rate, colors } => {
             bfr[4] = (colors.len() as u8) * 3 + 5;
             bfr[9] = 0x03;
-            bfr[11] = rate_check(rate, 3);
+            bfr[11] = rate_default(rate);
 
             write_colors(&mut bfr, &colors, 6);
         }
@@ -67,7 +67,7 @@ pub fn set(device: &HidDevice, profile: u8, effect: Effect) -> Result<()> {
         Effect::PulseOne { rate, color } => {
             bfr[4] = 0x08;
             bfr[9] = 0x05;
-            bfr[11] = rate_check(rate, 5);
+            bfr[11] = rate_default(rate);
 
             write_colors(&mut bfr, &[color], 1);
         }
@@ -75,13 +75,13 @@ pub fn set(device: &HidDevice, profile: u8, effect: Effect) -> Result<()> {
         Effect::Tail { rate } => {
             bfr[4] = 0x05;
             bfr[9] = 0x06;
-            bfr[11] = rate_check(rate, 6);
+            bfr[11] = rate_default(rate);
         }
 
         Effect::Rave { rate, colors } => {
             bfr[4] = (colors.len() as u8) * 3 + 5;
             bfr[9] = 0x07;
-            bfr[11] = rate_check(rate, 7);
+            bfr[11] = rate_rave_wave(rate);
 
             write_colors(&mut bfr, &colors, 2);
         }
@@ -89,7 +89,7 @@ pub fn set(device: &HidDevice, profile: u8, effect: Effect) -> Result<()> {
         Effect::Wave { rate } => {
             bfr[4] = 0x05;
             bfr[9] = 0x08;
-            bfr[11] = rate_check(rate, 8);
+            bfr[11] = rate_rave_wave(rate);
         }
 
         Effect::Off => {
@@ -103,9 +103,18 @@ pub fn set(device: &HidDevice, profile: u8, effect: Effect) -> Result<()> {
     Ok(())
 }
 
-const fn rate_check(rate: u8, effect_id: u8) -> u8 {
-    match effect_id {
-        7 | 8 => (105 - rate) * 2,
-        _ => (105 - rate) / 5,
-    }
+// Both formulas are taken verbatim from the original reverse engineering of
+// Glorious Core. The firmware's meaning of these constants is not documented;
+// they are only known to be the required wire values.
+const RATE_BASE: u8 = 105;
+
+/// Wire rate for every animated effect except Rave and Wave:
+/// `(RATE_BASE - rate) / 5`.
+const fn rate_default(rate: u8) -> u8 {
+    (RATE_BASE - rate) / 5
+}
+
+/// Wire rate for the Rave and Wave effects: `(RATE_BASE - rate) * 2`.
+const fn rate_rave_wave(rate: u8) -> u8 {
+    (RATE_BASE - rate) * 2
 }

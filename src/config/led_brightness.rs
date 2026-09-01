@@ -1,6 +1,7 @@
+use crate::util::IO_DELAY;
 use anyhow::Result;
 use hidapi::HidDevice;
-use std::{thread, time::Duration};
+use std::thread;
 
 pub fn set(device: &HidDevice, wired: u8, wireless: u8) -> Result<()> {
     let mut bfr = [0u8; 65];
@@ -15,7 +16,7 @@ pub fn set(device: &HidDevice, wired: u8, wireless: u8) -> Result<()> {
 
     device.send_feature_report(&bfr)?;
 
-    thread::sleep(Duration::from_millis(50));
+    thread::sleep(IO_DELAY);
 
     bfr[7] = 0x00;
     bfr[8] = wireless;

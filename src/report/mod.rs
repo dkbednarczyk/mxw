@@ -5,7 +5,12 @@ pub mod profile;
 
 use anyhow::{anyhow, Result};
 use hidapi::HidDevice;
-use std::{thread, time::Duration};
+use std::thread;
+
+use crate::util::IO_DELAY;
+
+/// Number of times to poll for a response before giving up.
+const MAX_READ_ATTEMPTS: usize = 5;
 
 pub fn read(device: &HidDevice, length: u8, command: u8, sub: u8, arg: u8) -> Result<[u8; 65]> {
     let mut bfr = [0u8; 65];
@@ -19,8 +24,8 @@ pub fn read(device: &HidDevice, length: u8, command: u8, sub: u8, arg: u8) -> Re
     device.send_feature_report(&bfr)?;
 
     let mut resp = [0u8; 65];
-    for _ in 0..5 {
-        thread::sleep(Duration::from_millis(50));
+    for _ in 0..MAX_READ_ATTEMPTS {
+        thread::sleep(IO_DELAY);
 
         device.get_feature_report(&mut resp)?;
 

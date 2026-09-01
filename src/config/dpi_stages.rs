@@ -1,4 +1,4 @@
-use crate::config::{dpi_stage, MAX_DPI_STAGES};
+use crate::config::{dpi_stage, dpi_stages_payload_len, MAX_DPI_STAGES};
 use crate::report;
 use anyhow::{anyhow, Result};
 use hidapi::HidDevice;
@@ -28,8 +28,7 @@ pub fn set(device: &HidDevice, profile: u8, stages: Vec<u16>, uniform: Option<u1
     let mut bfr = [0u8; 65];
 
     bfr[3] = 0x02;
-    // Payload length: 2 bytes of profile + count, then 4 bytes per stage
-    bfr[4] = 2 + (stages.len() * 4) as u8;
+    bfr[4] = dpi_stages_payload_len(stages.len());
     bfr[5] = 0x01;
     bfr[6] = 0x01;
 

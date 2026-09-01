@@ -6,10 +6,10 @@ use hidapi::HidDevice;
 pub fn get(device: &HidDevice, wired: bool, hide_status: bool) -> Result<()> {
     let bfr_r = status::get_buffer(device)?;
 
-    let mut percentage = bfr_r[8];
-    if percentage == 0 {
-        percentage = 1;
-    }
+    // A device plugged in from empty briefly reports 0 before the first real
+    // reading, and readings above 100 are garbage; clamp both into the
+    // plausible 1..=100 range.
+    let percentage = bfr_r[8].clamp(1, 100);
 
     let status = status::get(device)?;
 

@@ -1,11 +1,11 @@
-use crate::config::MAX_DPI_STAGES;
+use crate::config::{dpi_stages_payload_len, MAX_DPI_STAGES};
 use crate::report;
 use anyhow::{anyhow, Result};
 use hidapi::HidDevice;
 
-/// Response length for the DPI stages read: 2 bytes of profile + count, then
-/// 4 bytes per stage (always request enough for the maximum stage count).
-const DPI_STAGES_LENGTH: u8 = 2 + (MAX_DPI_STAGES as usize * 4) as u8;
+/// Response length for the DPI stages read (always request enough for the
+/// maximum stage count).
+const DPI_STAGES_LENGTH: u8 = dpi_stages_payload_len(MAX_DPI_STAGES as usize);
 
 /// Return the number of DPI stages currently configured for a profile.
 pub fn count(device: &HidDevice, profile: u8) -> Result<u8> {

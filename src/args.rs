@@ -1,3 +1,5 @@
+use crate::config::lift_off::MAX_LIFT_OFF_MM;
+use crate::config::MAX_PROFILES;
 use crate::util::color::Color;
 use crate::util::key::{self, Key};
 use clap::{value_parser, Parser, Subcommand, ValueEnum};
@@ -46,7 +48,7 @@ pub enum Report {
     /// Active DPI stage and its resolution
     DPI {
         /// Profile id (1-3), defaults to the active profile
-        #[arg(short, long, value_parser = value_parser!(u8).range(1..=3))]
+        #[arg(short, long, value_parser = profile_parser())]
         profile: Option<u8>,
 
         /// List every DPI stage, marking the active one
@@ -67,7 +69,7 @@ pub enum Report {
 pub enum Config {
     /// Active profile by id
     Profile {
-        #[arg(value_parser = value_parser!(u8).range(1..=3))]
+        #[arg(value_parser = profile_parser())]
         id: u8,
     },
 
@@ -77,7 +79,7 @@ pub enum Config {
         #[arg(
             short, long,
             default_value = "1",
-            value_parser = value_parser!(u8).range(1..=3),
+            value_parser = profile_parser(),
         )]
         profile: u8,
 
@@ -107,7 +109,7 @@ pub enum Config {
         #[arg(
             short, long,
             default_value = "1",
-            value_parser = value_parser!(u8).range(1..=3),
+            value_parser = profile_parser(),
         )]
         profile: u8,
 
@@ -121,7 +123,7 @@ pub enum Config {
         #[arg(
             short, long,
             default_value = "1",
-            value_parser = value_parser!(u8).range(1..=3),
+            value_parser = profile_parser(),
         )]
         profile: u8,
 
@@ -149,7 +151,7 @@ pub enum Config {
         #[arg(
             short, long,
             default_value = "1",
-            value_parser = value_parser!(u8).range(1..=3),
+            value_parser = profile_parser(),
         )]
         profile: u8,
 
@@ -163,7 +165,7 @@ pub enum Config {
 
     /// Lift-off distance in mm
     LiftOff {
-        #[arg(value_parser = value_parser!(u8).range(1..=2))]
+        #[arg(value_parser = value_parser!(u8).range(1..=MAX_LIFT_OFF_MM as i64))]
         mm: u8,
     },
 
@@ -179,7 +181,7 @@ pub enum Config {
         #[arg(
             short, long,
             default_value = "1",
-            value_parser = value_parser!(u8).range(1..=3),
+            value_parser = profile_parser(),
         )]
         profile: u8,
 
@@ -193,7 +195,7 @@ pub enum Config {
         #[arg(
             short, long,
             default_value = "1",
-            value_parser = value_parser!(u8).range(1..=3),
+            value_parser = profile_parser(),
         )]
         profile: u8,
 
@@ -210,6 +212,11 @@ pub enum Config {
         #[arg(value_enum)]
         direction: ScrollDirection,
     },
+}
+
+/// Shared value parser for profile ids (`1..=MAX_PROFILES`)
+fn profile_parser() -> clap::builder::RangedI64ValueParser<u8> {
+    value_parser!(u8).range(1..=MAX_PROFILES as i64)
 }
 
 fn parse_polling_rate(value: &str) -> Result<u8, &'static str> {

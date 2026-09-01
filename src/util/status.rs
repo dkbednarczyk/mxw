@@ -1,6 +1,8 @@
 use anyhow::{anyhow, Result};
 use hidapi::HidDevice;
-use std::{thread, time::Duration};
+use std::thread;
+
+use crate::util::IO_DELAY;
 
 pub fn get_buffer(device: &HidDevice) -> Result<[u8; 65]> {
     let mut to_send = [0u8; 65];
@@ -11,7 +13,7 @@ pub fn get_buffer(device: &HidDevice) -> Result<[u8; 65]> {
 
     device.send_feature_report(&to_send)?;
 
-    thread::sleep(Duration::from_millis(50));
+    thread::sleep(IO_DELAY);
 
     let mut resp = [0u8; 65];
 
