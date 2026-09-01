@@ -57,7 +57,7 @@ fn set_and_check(device: &HidDevice, bfr: &[u8]) -> Result<()> {
         }
     }
 
-    println!("{}: failed to bind key", "error".bold().red());
+    eprintln!("{}: failed to bind key", "error".bold().red());
 
     Err(anyhow!(
         "feature report did not return new bind after 3 retries"

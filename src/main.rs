@@ -27,7 +27,7 @@ fn main() -> Result<()> {
         })
         .min_by(|a, b| a.product_id().cmp(&b.product_id()))
         .unwrap_or_else(|| {
-            println!("{}: no matching device found", "error".bold().red());
+            eprintln!("{}: no matching device found", "error".bold().red());
             process::exit(1);
         });
 
