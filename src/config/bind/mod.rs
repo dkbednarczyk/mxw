@@ -75,13 +75,7 @@ fn set_key(bfr: &mut [u8], kind: KeyKind) {
     };
 
     if let Some(value) = modifier {
-        bfr[2] = match value.code {
-            "ControlLeft" => 0x01,
-            "ShiftRight" => 0x02,
-            "AltRight" => 0x04,
-            "MetaLeft" => 0x08,
-            _ => 0x00,
-        };
+        bfr[2] = value.modifier.unwrap_or(0);
     }
 
     if let Some(value) = key.modifier {
