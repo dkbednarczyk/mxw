@@ -7,6 +7,35 @@ While the project is pre-1.0, the **minor** version is bumped for new commands o
 flags and for user-visible behavior changes, and the **patch** version is bumped
 for bug fixes and internal changes.
 
+## [0.3.1] - 2026-08-31
+
+### Fixed
+
+- Binding a plain (non-modifier) key failed with "key code is invalid" — only
+  modifier keys could be bound. Non-modifier keys are now accepted for `key`,
+  and passing one to `--modifier` fails with a distinct "key is not a modifier"
+  error instead.
+- `config lift-off` panicked before parsing ("Could not downcast to u8") due to
+  the value parser inferring `i64` for the `u8` argument.
+- `Meta_Right` was dropped when matched as a modifier.
+- Stale status responses (reports without the `0x83` marker) are no longer
+  indistinguishable from the `0xA2` device state in `report battery`; they are
+  reported as unknown status. Internally the device state is now a
+  `DeviceStatus` enum instead of a `usize` position.
+- `config bind` reads back full-size 65-byte reports like every other command
+  instead of a truncated 55-byte buffer.
+
+### Changed
+
+- Device selection prefers the lowest product id via `min_by_key`, and a
+  missing device surfaces as a regular `anyhow` error instead of a manual
+  `process::exit`.
+- `Color` implements `FromStr` (so clap parses it without an explicit value
+  parser) and is now `Copy`.
+- Internal cleanups: duplicate `Key`/`RawKey` structs collapsed, `const RAW_KEYS`
+  table, `TryFrom` instead of `TryInto`, `#[arg]` attributes standardized, the
+  scroll direction and LED-effect color padding loops deduplicated.
+
 ## [0.3.0] - 2026-08-28
 
 ### Added
@@ -81,6 +110,7 @@ for bug fixes and internal changes.
 
 - Error handling moved to `anyhow` throughout.
 
+[0.3.1]: https://github.com/dkbednarczyk/mxw/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/dkbednarczyk/mxw/compare/v0.2.4...v0.3.0
 [0.2.4]: https://github.com/dkbednarczyk/mxw/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/dkbednarczyk/mxw/compare/v0.2.2...v0.2.3
