@@ -6,12 +6,10 @@ pub mod glorious;
 pub mod report;
 pub mod util;
 
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use args::{Args, Config, Kind, Report};
 use clap::Parser;
-use colored::Colorize;
 use hidapi::HidApi;
-use std::process;
 
 fn main() -> Result<()> {
     let args = Args::parse();
@@ -25,11 +23,11 @@ fn main() -> Result<()> {
                 && glorious::is_glorious_product(d.product_id())
                 && d.interface_number() == glorious::INTERFACE
         })
-        .min_by(|a, b| a.product_id().cmp(&b.product_id()))
-        .unwrap_or_else(|| {
-            eprintln!("{}: no matching device found", "error".bold().red());
-            process::exit(1);
-        });
+        // A Model O Wireless plugged in via cable enumerates both the wired
+        // (0x2011) and wireless (0x2022) interfaces; the wired one is preferred
+        // and has the lower product id.
+        .min_by_key(|d| d.product_id())
+        .ok_or_else(|| anyhow!("no matching device found"))?;
 
     let wired = glorious::is_wired(device_info.product_id());
 

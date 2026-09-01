@@ -20,25 +20,43 @@ pub fn get_buffer(device: &HidDevice) -> Result<[u8; 65]> {
     Ok(resp)
 }
 
-pub fn get(device: &HidDevice) -> Result<usize> {
+/// Device state from the `resp[1]` field of a `0x83` status report.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum DeviceStatus {
+    Awake,    // 0xA1
+    Asleep,   // 0xA4
+    WakingUp, // 0xA0
+    Unknown(u8),
+    /// The response was not a status report (`resp[6] != 0x83`),
+    /// e.g. a stale one.
+    Invalid,
+}
+
+impl DeviceStatus {
+    const fn from_report(resp: &[u8; 65]) -> Self {
+        if resp[6] != 0x83 {
+            return Self::Invalid;
+        }
+
+        match resp[1] {
+            0xA1 => Self::Awake,
+            0xA4 => Self::Asleep,
+            0xA0 => Self::WakingUp,
+            other => Self::Unknown(other),
+        }
+    }
+}
+
+pub fn get(device: &HidDevice) -> Result<DeviceStatus> {
     let mut resp = get_buffer(device)?;
 
     device.get_feature_report(&mut resp)?;
 
-    let status = [0xA1, 0xA4, 0xA2, 0xA0, 0xA3]
-        .iter()
-        .position(|&s| s == resp[1])
-        .ok_or_else(|| anyhow!("failed to get status"))?;
-
-    if resp[6] != 0x83 {
-        return Ok(2);
-    }
-
-    Ok(status)
+    Ok(DeviceStatus::from_report(&resp))
 }
 
 pub fn check_sleep(device: &HidDevice) -> Result<()> {
-    if get(device)? == 1 {
+    if get(device)? == DeviceStatus::Asleep {
         return Err(anyhow!("device is sleeping"));
     }
 

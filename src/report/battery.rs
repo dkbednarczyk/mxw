@@ -14,8 +14,8 @@ pub fn get(device: &HidDevice, wired: bool, hide_status: bool) -> Result<()> {
     let status = status::get(device)?;
 
     match (status, wired) {
-        (0, false) => println!("{percentage}%"),
-        (0, true) => {
+        (status::DeviceStatus::Awake, false) => println!("{percentage}%"),
+        (status::DeviceStatus::Awake, true) => {
             let mut charging_status = String::new();
             if !hide_status {
                 charging_status = match percentage {
@@ -28,8 +28,8 @@ pub fn get(device: &HidDevice, wired: bool, hide_status: bool) -> Result<()> {
 
             println!("{percentage}%{charging_status}")
         }
-        (1, _) => println!("(asleep)"),
-        (3, _) => print!("(waking up)"),
+        (status::DeviceStatus::Asleep, _) => println!("(asleep)"),
+        (status::DeviceStatus::WakingUp, _) => print!("(waking up)"),
         (_, _) => {
             println!(
                 "[1:{:0>2X}, 6:{:0>2X}, 8:{:0>2X}] ({})",

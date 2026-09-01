@@ -1,4 +1,4 @@
-use crate::util::color::{self, Color};
+use crate::util::color::Color;
 use crate::util::key::{self, Key};
 use clap::{value_parser, Parser, Subcommand, ValueEnum};
 
@@ -14,18 +14,18 @@ use clap::{value_parser, Parser, Subcommand, ValueEnum};
     propagate_version = true
 )]
 pub struct Args {
-    #[clap(subcommand)]
+    #[command(subcommand)]
     pub kind: Kind,
 }
 
 #[derive(Subcommand)]
 pub enum Kind {
     /// Retrieve information about the device
-    #[clap(subcommand)]
+    #[command(subcommand)]
     Report(Report),
 
     /// Change the device's various settings
-    #[clap(subcommand)]
+    #[command(subcommand)]
     Config(Config),
 }
 
@@ -81,7 +81,7 @@ pub enum Config {
         )]
         profile: u8,
 
-        #[clap(subcommand)]
+        #[command(subcommand)]
         effect: Effect,
     },
 
@@ -89,7 +89,7 @@ pub enum Config {
     LEDBrightness {
         wired: u8,
 
-        #[clap(default_value = "0")]
+        #[arg(default_value = "0")]
         wireless: u8,
     },
 
@@ -97,7 +97,7 @@ pub enum Config {
     Sleep {
         minutes: u8,
 
-        #[clap(default_value = "0")]
+        #[arg(default_value = "0")]
         seconds: u8,
     },
 
@@ -156,7 +156,6 @@ pub enum Config {
         #[arg(
             name = "COLOR",
             num_args(1..=6),
-            value_parser(color::parse_hex),
             default_values(&["FFFF00", "0000FF", "FF0000", "00FF00"]),
         )]
         colors: Vec<Color>,
@@ -164,7 +163,7 @@ pub enum Config {
 
     /// Lift-off distance in mm
     LiftOff {
-        #[arg(value_parser(1..=2))]
+        #[arg(value_parser = value_parser!(u8).range(1..=2))]
         mm: u8,
     },
 
@@ -184,7 +183,7 @@ pub enum Config {
         )]
         profile: u8,
 
-        #[clap(value_parser = value_parser!(u8).range(0..=16))]
+        #[arg(value_parser = value_parser!(u8).range(0..=16))]
         ms: u8,
     },
 
@@ -202,7 +201,7 @@ pub enum Config {
         #[arg(value_enum)]
         button: Button,
 
-        #[clap(subcommand)]
+        #[command(subcommand)]
         binding: Binding,
     },
 
@@ -261,18 +260,13 @@ pub enum Effect {
         rate: u8,
 
         /// From 2 to 6 colors in hex format
-        #[arg(
-            required = true,
-            num_args(2..=6),
-            value_parser(color::parse_hex),
-        )]
+        #[arg(required = true, num_args(2..=6))]
         colors: Vec<Color>,
     },
 
     /// Solid color
     Solid {
         /// Color in hex format
-        #[arg(value_parser(color::parse_hex))]
         color: Color,
     },
 
@@ -286,7 +280,6 @@ pub enum Effect {
         )]
         rate: u8,
 
-        #[arg(value_parser(color::parse_hex))]
         color: Color,
     },
 
@@ -312,11 +305,7 @@ pub enum Effect {
         rate: u8,
 
         /// 1 or 2 colors in hex format
-        #[arg(
-            required = true,
-            num_args(1..=2),
-            value_parser(color::parse_hex),
-        )]
+        #[arg(required = true, num_args(1..=2))]
         colors: Vec<Color>,
     },
 
@@ -352,24 +341,24 @@ pub enum Button {
 pub enum Binding {
     /// Single key
     Key {
-        #[clap(subcommand)]
+        #[command(subcommand)]
         kind: KeyKind,
     },
 
     /// Keyboard function
-    #[clap(subcommand)]
+    #[command(subcommand)]
     Keyboard(KeyboardFn),
 
     /// Mouse function
-    #[clap(subcommand)]
+    #[command(subcommand)]
     Mouse(MouseFn),
 
     /// DPI modifier
-    #[clap(subcommand)]
+    #[command(subcommand)]
     DPI(DPIFn),
 
     /// Multimedia
-    #[clap(subcommand)]
+    #[command(subcommand)]
     Media(MediaFn),
 
     /// Do nothing
@@ -384,7 +373,7 @@ pub enum KeyKind {
         key: Key,
 
         /// Optional modifier
-        #[arg(short, long, value_parser(key::parse_scan_code))]
+        #[arg(short, long, value_parser(key::parse_modifier_scan_code))]
         modifier: Option<Key>,
     },
 
@@ -394,7 +383,7 @@ pub enum KeyKind {
         key: Key,
 
         /// Optional modifier
-        #[arg(short, long, value_parser(key::parse_key_code))]
+        #[arg(short, long, value_parser(key::parse_modifier_key_code))]
         modifier: Option<Key>,
     },
 
@@ -404,12 +393,12 @@ pub enum KeyKind {
         key: Key,
 
         /// Optional modifier
-        #[arg(short, long, value_parser(key::parse_code))]
+        #[arg(short, long, value_parser(key::parse_modifier_code))]
         modifier: Option<Key>,
     },
 }
 
-#[derive(Subcommand)]
+#[derive(Clone, Copy, Subcommand)]
 pub enum MouseFn {
     Left,
     Right,

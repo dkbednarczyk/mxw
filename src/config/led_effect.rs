@@ -1,6 +1,31 @@
 use crate::args::Effect;
+use crate::util::color::Color;
 use anyhow::Result;
 use hidapi::HidDevice;
+
+/// Colors are written in 3-byte slots from byte 12, padded with black.
+const fn black() -> Color {
+    Color {
+        red: 0,
+        green: 0,
+        blue: 0,
+    }
+}
+
+fn write_colors(bfr: &mut [u8], colors: &[Color], slots: usize) {
+    for (i, color) in colors
+        .iter()
+        .chain(std::iter::repeat(&black()))
+        .take(slots)
+        .enumerate()
+    {
+        let offset = 12 + (3 * i);
+
+        bfr[offset] = color.red;
+        bfr[offset + 1] = color.green;
+        bfr[offset + 2] = color.blue;
+    }
+}
 
 pub fn set(device: &HidDevice, profile: u8, effect: Effect) -> Result<()> {
     let mut bfr = [0u8; 65];
@@ -29,28 +54,14 @@ pub fn set(device: &HidDevice, profile: u8, effect: Effect) -> Result<()> {
             bfr[9] = 0x03;
             bfr[11] = rate_check(rate, 3);
 
-            for i in 0..6 {
-                let offset = 12 + (3 * i);
-
-                if i >= colors.len() {
-                    bfr[offset] = 0x00;
-                    bfr[offset + 1] = 0x00;
-                    bfr[offset + 2] = 0x00;
-                } else {
-                    bfr[offset] = colors[i].red;
-                    bfr[offset + 1] = colors[i].green;
-                    bfr[offset + 2] = colors[i].blue;
-                }
-            }
+            write_colors(&mut bfr, &colors, 6);
         }
 
         Effect::Solid { color } => {
             bfr[4] = 0x08;
             bfr[9] = 0x04;
 
-            bfr[12] = color.red;
-            bfr[12 + 1] = color.green;
-            bfr[12 + 2] = color.blue;
+            write_colors(&mut bfr, &[color], 1);
         }
 
         Effect::PulseOne { rate, color } => {
@@ -58,9 +69,7 @@ pub fn set(device: &HidDevice, profile: u8, effect: Effect) -> Result<()> {
             bfr[9] = 0x05;
             bfr[11] = rate_check(rate, 5);
 
-            bfr[12] = color.red;
-            bfr[12 + 1] = color.green;
-            bfr[12 + 2] = color.blue;
+            write_colors(&mut bfr, &[color], 1);
         }
 
         Effect::Tail { rate } => {
@@ -74,19 +83,7 @@ pub fn set(device: &HidDevice, profile: u8, effect: Effect) -> Result<()> {
             bfr[9] = 0x07;
             bfr[11] = rate_check(rate, 7);
 
-            for i in 0..2 {
-                let offset = 12 + (3 * i);
-
-                if i >= colors.len() {
-                    bfr[offset] = 0x00;
-                    bfr[offset + 1] = 0x00;
-                    bfr[offset + 2] = 0x00;
-                } else {
-                    bfr[offset] = colors[i].red;
-                    bfr[offset + 1] = colors[i].green;
-                    bfr[offset + 2] = colors[i].blue;
-                }
-            }
+            write_colors(&mut bfr, &colors, 2);
         }
 
         Effect::Wave { rate } => {
