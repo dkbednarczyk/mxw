@@ -1,6 +1,9 @@
 use anyhow::Result;
 use hidapi::HidDevice;
 
+/// Maximum debounce time in ms accepted by the device.
+pub const MAX_DEBOUNCE_MS: u8 = 16;
+
 pub fn set(device: &HidDevice, profile: u8, ms: u8) -> Result<()> {
     let mut bfr = [0u8; 65];
 

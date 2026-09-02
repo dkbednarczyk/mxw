@@ -37,13 +37,13 @@ fn main() -> Result<()> {
         // mxw report
         Kind::Report(report) => match report {
             // mow report battery
-            Report::Battery { hide_status } => report::battery::get(&device, wired, hide_status),
+            Report::Battery { value } => report::battery::get(&device, wired, value),
 
             // mow report firmware
             Report::Firmware => report::firmware::get(&device),
 
             // mxw report profile
-            Report::Profile => report::profile::get(&device),
+            Report::Profile { value } => report::profile::get(&device, value),
 
             // mxw report dpi
             Report::DPI {
@@ -52,6 +52,18 @@ fn main() -> Result<()> {
                 dpi,
                 stage,
             } => report::dpi::get(&device, profile, all, dpi, stage),
+
+            // mxw report sleep
+            Report::Sleep { seconds } => report::sleep::get(&device, seconds),
+
+            // mxw report polling-rate
+            Report::PollingRate { ms, hz } => report::polling_rate::get(&device, ms, hz),
+
+            // mxw report lift-off
+            Report::LiftOff { value } => report::lift_off::get(&device, value),
+
+            // mxw report debounce
+            Report::Debounce { profile, value } => report::debounce::get(&device, profile, value),
         },
 
         // mxw config

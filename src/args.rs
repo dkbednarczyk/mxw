@@ -1,4 +1,5 @@
 use crate::config::MAX_PROFILES;
+use crate::config::debounce::MAX_DEBOUNCE_MS;
 use crate::config::lift_off::MAX_LIFT_OFF_MM;
 use crate::util::color::Color;
 use crate::util::key::{self, Key};
@@ -35,15 +36,20 @@ pub enum Kind {
 pub enum Report {
     /// Battery percentage (if available)
     Battery {
-        #[arg(long, help = "Hide charging status")]
-        hide_status: bool,
+        /// Print only the percentage value, e.g. `100`
+        #[arg(short, long)]
+        value: bool,
     },
 
     /// Device firmware version
     Firmware,
 
     /// Active profile id
-    Profile,
+    Profile {
+        /// Print only the profile id, e.g. `1`
+        #[arg(short, long)]
+        value: bool,
+    },
 
     /// Active DPI stage and its resolution
     DPI {
@@ -62,6 +68,46 @@ pub enum Report {
         /// Print only the active stage number, e.g. `3`
         #[arg(short, long)]
         stage: bool,
+    },
+
+    /// Sleep delay
+    Sleep {
+        /// Print only the total delay in seconds, e.g. `600`
+        #[arg(short, long)]
+        seconds: bool,
+    },
+
+    /// Polling rate in ms
+    PollingRate {
+        /// Print only the interval in ms, e.g. `1`
+        #[arg(short, long, conflicts_with = "hz")]
+        ms: bool,
+
+        /// Print only the rate in Hz, e.g. `1000`
+        #[arg(long, conflicts_with = "ms")]
+        hz: bool,
+    },
+
+    /// Lift-off distance in mm
+    LiftOff {
+        /// Print only the distance value, e.g. `1`
+        #[arg(short, long)]
+        value: bool,
+    },
+
+    /// Debounce in ms (0-16)
+    Debounce {
+        /// Profile id (1-3)
+        #[arg(
+            short, long,
+            default_value = "1",
+            value_parser = profile_parser(),
+        )]
+        profile: u8,
+
+        /// Print only the debounce value, e.g. `4`
+        #[arg(short, long)]
+        value: bool,
     },
 }
 
@@ -185,7 +231,7 @@ pub enum Config {
         )]
         profile: u8,
 
-        #[arg(value_parser = value_parser!(u8).range(0..=16))]
+        #[arg(value_parser = value_parser!(u8).range(0..=MAX_DEBOUNCE_MS as i64))]
         ms: u8,
     },
 

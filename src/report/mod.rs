@@ -1,7 +1,11 @@
 pub mod battery;
+pub mod debounce;
 pub mod dpi;
 pub mod firmware;
+pub mod lift_off;
+pub mod polling_rate;
 pub mod profile;
+pub mod sleep;
 
 use anyhow::{Result, anyhow};
 use hidapi::HidDevice;
