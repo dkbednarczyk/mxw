@@ -114,11 +114,11 @@ fn main() -> Result<()> {
                     profile,
                     uniform,
                     stages,
-                } => config::dpi_stages::set(&device, profile, stages, uniform),
+                } => config::dpi_stages::set(&device, profile, &stages, uniform),
 
                 // mxw config dpi-colors <COLORS>...
                 Config::DPIColors { profile, colors } => {
-                    config::dpi_colors::set(&device, profile, colors)
+                    config::dpi_colors::set(&device, profile, &colors)
                 }
             }
         }

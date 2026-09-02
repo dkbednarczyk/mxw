@@ -7,10 +7,7 @@ use hidapi::HidDevice;
 /// maximum stage count).
 const DPI_STAGES_LENGTH: u8 = dpi_stages_payload_len(MAX_DPI_STAGES as usize);
 
-/// Return the number of DPI stages currently configured for a profile.
-pub fn count(device: &HidDevice, profile: u8) -> Result<u8> {
-    let count = report::read(device, DPI_STAGES_LENGTH, 0x81, 0x01, profile)?[8];
-
+fn check_count(count: u8) -> Result<u8> {
     if !(1..=MAX_DPI_STAGES).contains(&count) {
         return Err(anyhow!(
             "device reported an implausible DPI stage count ({count})"
@@ -18,6 +15,13 @@ pub fn count(device: &HidDevice, profile: u8) -> Result<u8> {
     }
 
     Ok(count)
+}
+
+/// Return the number of DPI stages currently configured for a profile.
+pub fn count(device: &HidDevice, profile: u8) -> Result<u8> {
+    let count = report::read(device, DPI_STAGES_LENGTH, 0x81, 0x01, profile)?[8];
+
+    check_count(count)
 }
 
 pub fn get(
@@ -40,13 +44,7 @@ pub fn get(
     }
 
     let stages = report::read(device, DPI_STAGES_LENGTH, 0x81, 0x01, profile)?;
-    let count = stages[8];
-
-    if !(1..=MAX_DPI_STAGES).contains(&count) {
-        return Err(anyhow!(
-            "device reported an implausible DPI stage count ({count})"
-        ));
-    }
+    let count = check_count(stages[8])?;
 
     let dpi = |stage: u8| -> u16 {
         let offset = 9 + 4 * (stage as usize - 1);

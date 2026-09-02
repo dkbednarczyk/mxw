@@ -5,13 +5,12 @@ use hidapi::HidDevice;
 
 pub fn get(device: &HidDevice, wired: bool, value_only: bool) -> Result<()> {
     let bfr_r = status::get_buffer(device)?;
+    let status = status::DeviceStatus::from_report(&bfr_r);
 
     // A device plugged in from empty briefly reports 0 before the first real
     // reading, and readings above 100 are garbage; clamp both into the
     // plausible 1..=100 range.
     let percentage = bfr_r[8].clamp(1, 100);
-
-    let status = status::get(device)?;
 
     if value_only {
         match status {

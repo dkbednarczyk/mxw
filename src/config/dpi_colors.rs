@@ -3,7 +3,7 @@ use crate::util::color::Color;
 use anyhow::{Result, anyhow};
 use hidapi::HidDevice;
 
-pub fn set(device: &HidDevice, profile: u8, colors: Vec<Color>) -> Result<()> {
+pub fn set(device: &HidDevice, profile: u8, colors: &[Color]) -> Result<()> {
     let count = report::dpi::count(device, profile)? as usize;
 
     if colors.len() != count {

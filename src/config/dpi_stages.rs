@@ -3,12 +3,16 @@ use crate::report;
 use anyhow::{Result, anyhow};
 use hidapi::HidDevice;
 
-pub fn set(device: &HidDevice, profile: u8, stages: Vec<u16>, uniform: Option<u16>) -> Result<()> {
+pub fn set(device: &HidDevice, profile: u8, stages: &[u16], uniform: Option<u16>) -> Result<()> {
+    let uniform_stages;
     let stages = match uniform {
         // Fill every stage the profile currently has with the same value.
         // Reading the count back is unavoidable here: "all stages" is defined
         // by the device's current configuration, not by anything on the CLI.
-        Some(dpi) => vec![dpi; report::dpi::count(device, profile)? as usize],
+        Some(dpi) => {
+            uniform_stages = vec![dpi; report::dpi::count(device, profile)? as usize];
+            &uniform_stages
+        }
         None => stages,
     };
 

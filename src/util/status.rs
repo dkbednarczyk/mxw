@@ -4,7 +4,7 @@ use std::thread;
 
 use crate::util::IO_DELAY;
 
-pub fn get_buffer(device: &HidDevice) -> Result<[u8; 65]> {
+pub(crate) fn get_buffer(device: &HidDevice) -> Result<[u8; 65]> {
     let mut to_send = [0u8; 65];
 
     to_send[3] = 0x02;
@@ -35,7 +35,7 @@ pub enum DeviceStatus {
 }
 
 impl DeviceStatus {
-    const fn from_report(resp: &[u8; 65]) -> Self {
+    pub(crate) const fn from_report(resp: &[u8; 65]) -> Self {
         if resp[6] != 0x83 {
             return Self::Invalid;
         }
@@ -50,9 +50,7 @@ impl DeviceStatus {
 }
 
 pub fn get(device: &HidDevice) -> Result<DeviceStatus> {
-    let mut resp = get_buffer(device)?;
-
-    device.get_feature_report(&mut resp)?;
+    let resp = get_buffer(device)?;
 
     Ok(DeviceStatus::from_report(&resp))
 }
