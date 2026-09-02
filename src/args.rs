@@ -1,8 +1,8 @@
-use crate::config::lift_off::MAX_LIFT_OFF_MM;
 use crate::config::MAX_PROFILES;
+use crate::config::lift_off::MAX_LIFT_OFF_MM;
 use crate::util::color::Color;
 use crate::util::key::{self, Key};
-use clap::{value_parser, Parser, Subcommand, ValueEnum};
+use clap::{Parser, Subcommand, ValueEnum, value_parser};
 
 #[derive(Parser)]
 #[command(

@@ -1,5 +1,5 @@
 use crate::report;
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use hidapi::HidDevice;
 
 pub fn set(device: &HidDevice, profile: u8, id: u8) -> Result<()> {

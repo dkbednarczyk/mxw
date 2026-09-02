@@ -1,6 +1,6 @@
 use crate::args::{Binding, Button, DPIFn, KeyKind, KeyboardFn, MediaFn, MouseFn};
 use crate::util::IO_DELAY;
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use colored::Colorize;
 use hidapi::HidDevice;
 use std::thread;

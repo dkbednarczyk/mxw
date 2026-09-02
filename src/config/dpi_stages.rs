@@ -1,6 +1,6 @@
-use crate::config::{dpi_stage, dpi_stages_payload_len, MAX_DPI_STAGES};
+use crate::config::{MAX_DPI_STAGES, dpi_stage, dpi_stages_payload_len};
 use crate::report;
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use hidapi::HidDevice;
 
 pub fn set(device: &HidDevice, profile: u8, stages: Vec<u16>, uniform: Option<u16>) -> Result<()> {

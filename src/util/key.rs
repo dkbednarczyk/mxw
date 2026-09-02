@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use std::str::FromStr;
 
 pub fn parse_scan_code(keystr: &str) -> Result<Key> {

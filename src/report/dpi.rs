@@ -1,6 +1,6 @@
-use crate::config::{dpi_stages_payload_len, MAX_DPI_STAGES};
+use crate::config::{MAX_DPI_STAGES, dpi_stages_payload_len};
 use crate::report;
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use hidapi::HidDevice;
 
 /// Response length for the DPI stages read (always request enough for the

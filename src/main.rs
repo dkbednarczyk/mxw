@@ -6,7 +6,7 @@ pub mod glorious;
 pub mod report;
 pub mod util;
 
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use args::{Args, Config, Kind, Report};
 use clap::Parser;
 use hidapi::HidApi;

@@ -3,7 +3,7 @@ pub mod dpi;
 pub mod firmware;
 pub mod profile;
 
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use hidapi::HidDevice;
 use std::thread;
 

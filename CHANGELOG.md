@@ -7,6 +7,13 @@ While the project is pre-1.0, the **minor** version is bumped for new commands o
 flags and for user-visible behavior changes, and the **patch** version is bumped
 for bug fixes and internal changes.
 
+## [0.3.2] - 2026-09-02
+
+### Changed
+
+- Migrated to Rust edition 2024 and declared `rust-version = "1.85"` (the
+  edition's minimum toolchain). No code changes were required.
+
 ## [0.3.1] - 2026-08-31
 
 ### Fixed
@@ -110,6 +117,7 @@ for bug fixes and internal changes.
 
 - Error handling moved to `anyhow` throughout.
 
+[0.3.2]: https://github.com/dkbednarczyk/mxw/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/dkbednarczyk/mxw/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/dkbednarczyk/mxw/compare/v0.2.4...v0.3.0
 [0.2.4]: https://github.com/dkbednarczyk/mxw/compare/v0.2.3...v0.2.4
