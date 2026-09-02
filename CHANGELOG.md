@@ -7,12 +7,33 @@ While the project is pre-1.0, the **minor** version is bumped for new commands o
 flags and for user-visible behavior changes, and the **patch** version is bumped
 for bug fixes and internal changes.
 
-## [0.3.2] - 2026-09-02
+## [0.4.0] - 2026-09-02
+
+### Added
+
+- `report sleep`, `report polling-rate`, `report lift-off`, and
+  `report debounce` for reading the sleep delay, polling rate, lift-off
+  distance, and debounce time.
+- Value-only flags for scripting: `report battery --value`,
+  `report profile --value`, `report sleep --seconds`,
+  `report polling-rate --ms` / `--hz`, `report lift-off --value`, and
+  `report debounce --value` (with `--profile`).
 
 ### Changed
 
+- Report output is humanized by default: `report battery` prints
+  `Battery: …`, `report profile` prints `Active profile: …`, and
+  `report firmware` prints `Firmware version: …`.
+- `report battery --hide-status` is replaced by `--value`, which prints only
+  the percentage (or `asleep` / `waking up` / `unknown`).
 - Migrated to Rust edition 2024 and declared `rust-version = "1.85"` (the
   edition's minimum toolchain). No code changes were required.
+
+### Fixed
+
+- `report battery` derived the charging status from a second status read
+  rather than the same report as the percentage, so a stale response could
+  be shown; both now come from a single status report.
 
 ## [0.3.1] - 2026-08-31
 
@@ -117,7 +138,7 @@ for bug fixes and internal changes.
 
 - Error handling moved to `anyhow` throughout.
 
-[0.3.2]: https://github.com/dkbednarczyk/mxw/compare/v0.3.1...v0.3.2
+[0.4.0]: https://github.com/dkbednarczyk/mxw/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/dkbednarczyk/mxw/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/dkbednarczyk/mxw/compare/v0.2.4...v0.3.0
 [0.2.4]: https://github.com/dkbednarczyk/mxw/compare/v0.2.3...v0.2.4
